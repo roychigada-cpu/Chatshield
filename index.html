@@ -200,7 +200,7 @@ view();
 
 /* Share */
 $("share").onclick=async()=>{
- const url="https://claude.ai/artifact/P4UNEamLLeuPmWu1gWmkwo",txt="ChatShield: a free safety kit for WhatsApp Business. Check your account and spot scams.",m=$("shmsg"),old=m.textContent;
+ const url="https://roychigada-cpu.github.io/Chatshield/",txt="ChatShield: a free safety kit for WhatsApp Business. Check your account and spot scams.",m=$("shmsg"),old=m.textContent;
  try{if(navigator.share){await navigator.share({title:"ChatShield",text:txt,url});return}}catch(e){if(e&&e.name==="AbortError")return}
  try{await navigator.clipboard.writeText(txt+" "+url);m.textContent="Link copied. Paste it in WhatsApp."}catch(e){m.textContent="Copy this link: "+url}
  setTimeout(()=>m.textContent=old,4000)};
