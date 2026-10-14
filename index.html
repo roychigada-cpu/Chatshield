@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ChatShield</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#EEF3F8;--card:#fff;--ink:#0F2A43;--mute:#5B6F84;--line:#D6E0EA;--brand:#1E6FD9;--onbrand:#fff;--ok:#0E8A6A;--okbg:#DDF3EC;--bad:#C9343A;--badbg:#FBE4E5;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1722;--card:#13263A;--ink:#E6EEF6;--mute:#93A8BD;--line:#25405A;--brand:#5AA2FF;--onbrand:#06182B;--ok:#3DD3A8;--okbg:#0F3A31;--bad:#FF7F85;--badbg:#44181B;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B1722;--card:#13263A;--ink:#E6EEF6;--mute:#93A8BD;--line:#25405A;--brand:#5AA2FF;--onbrand:#06182B;--ok:#3DD3A8;--okbg:#0F3A31;--bad:#FF7F85;--badbg:#44181B;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Figtree,system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:84px}
+h1,h2,h3{font-family:"Bricolage Grotesque",Figtree,system-ui,sans-serif;margin:0;line-height:1.15}
+header{display:flex;align-items:center;gap:16px;padding:20px 18px 8px;max-width:640px;margin:0 auto}
+header h1{font-size:30px;font-weight:800}
+header p{margin:2px 0 0;color:var(--mute);font-size:14px}
+.ring{flex:none;width:92px;height:92px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:9}
+.ring .t{stroke:var(--line)}
+.ring .p{stroke:var(--brand);stroke-linecap:round;transition:stroke-dashoffset .5s,stroke .3s}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font:800 22px "Bricolage Grotesque",sans-serif}
+main{max-width:640px;margin:0 auto;padding:8px 18px 24px}
+section{display:none}section.on{display:block}
+h2{font-size:21px;margin:18px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 14px}
+.item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.item:last-child{border-bottom:0}
+.item input{position:absolute;opacity:0}
+.box{flex:none;width:24px;height:24px;border:2px solid var(--mute);border-radius:7px;display:grid;place-items:center;margin-top:1px}
+.item input:checked+.box{background:var(--ok);border-color:var(--ok)}
+.item input:checked+.box:after{content:"";width:6px;height:11px;border:solid var(--card);border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.item input:focus-visible+.box,button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.item small{display:block;color:var(--mute);font-size:13px}
+.msg{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+.msg q{display:block;font-size:17px;quotes:none}
+.who{color:var(--mute);font-size:13px;margin-bottom:6px}
+.row{display:flex;gap:10px;margin-top:14px}
+button{font:600 16px Figtree,system-ui,sans-serif;border:0;border-radius:12px;padding:14px 16px;min-height:48px;cursor:pointer;flex:1}
+.real{background:var(--ok);color:var(--card)}
+.fake{background:var(--bad);color:var(--card)}
+.main{background:var(--brand);color:var(--onbrand)}
+.ghost{background:transparent;color:var(--brand);border:2px solid var(--brand)}
+.fb{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:15px}
+.fb.good{background:var(--okbg)}.fb.no{background:var(--badbg)}
+.prog{color:var(--mute);font-size:14px}
+.step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.step:last-child{border-bottom:0}
+.n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--bad);color:var(--card);display:grid;place-items:center;font-weight:700;font-size:14px}
+.step small{display:block;color:var(--mute);font-size:14px}
+.notice{background:var(--card);border:1px dashed var(--brand);border-radius:14px;padding:14px;margin:12px 0;font-size:15px}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+nav button{background:none;color:var(--mute);padding:8px 4px;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px}
+nav button[aria-selected=true]{color:var(--brand)}
+nav span{font-size:20px}
+@media (prefers-reduced-motion:reduce){.ring .p{transition:none}}
+header,main,.bar{zoom:var(--z,1)}
+.bar{display:flex;gap:8px;align-items:center;max-width:640px;margin:0 auto;padding:4px 18px;flex-wrap:wrap}
+.bar button{flex:none;padding:8px 14px;min-height:40px;font-size:15px;background:var(--card);color:var(--ink);border:2px solid var(--line)}
+.bar button[aria-pressed=true]{background:var(--brand);color:var(--onbrand);border-color:var(--brand)}
+.rule{padding:12px 14px;border-radius:12px;background:var(--okbg);font-weight:600;margin:8px 0}
+input{width:100%;font:inherit;padding:12px;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);margin-top:4px}
+.call{flex:1;text-align:center;text-decoration:none;background:var(--ok);color:var(--card);border-radius:12px;padding:16px;font-weight:600;min-height:48px}
+#stepnav{display:none}
+html:not(.simple) .plain{display:none}
+.simple .std{display:none}
+.simple #stepnav{display:block}
+.simple #s-check h2,.simple #s-check .card:not(.has),.simple #s-check .item:not(.cur),.simple #reset{display:none}
+.simple body{font-size:19px}
+.simple button,.simple .call{min-height:60px;font-size:20px}
+.simple .bar button{min-height:44px;font-size:16px}
+.simple .item{padding:20px 0;font-size:21px;line-height:1.4}
+.simple .box{width:36px;height:36px}
+.simple small,.simple .step small{font-size:16px;color:var(--ink)}
+.simple h2{font-size:26px}
+.simple .msg q,.simple .fb,.simple .step,.simple .notice{font-size:19px}
+.simple .rule{font-size:20px;padding:16px}
+.simple nav button{font-size:15px}
+.foot{text-align:center;margin-top:28px;padding-top:16px;border-top:1px solid var(--line);color:var(--mute);font-size:14px}
+.foot .main{margin-bottom:12px;width:100%}
+.simple .foot{font-size:17px}
+</style>
+</head>
+<body>
+<header>
+  <div class="ring" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="t" cx="50" cy="50" r="42"/><circle class="p" id="arc" cx="50" cy="50" r="42" stroke-dasharray="263.9" stroke-dashoffset="263.9"/></svg><b id="pct">0%</b></div>
+  <div><h1>ChatShield</h1><p id="status">Your WhatsApp Business safety kit</p></div>
+</header>
+<div class="bar"><button id="sm" aria-pressed="false">Simple mode</button><button data-z="0" aria-pressed="true" aria-label="Normal text">A</button><button data-z="1" aria-pressed="false" aria-label="Large text">A+</button><button data-z="2" aria-pressed="false" aria-label="Largest text">A++</button></div>
+<main>
+  <div class="rule">Golden rule: never tell anyone your code or PIN. Not even WhatsApp.</div>
+  <section id="s-check" class="on">
+    <h2>Lock down your account</h2><div class="card" id="g-acc"></div>
+    <h2>Protect the business</h2><div class="card" id="g-biz"></div>
+    <h2>Keep your phone clean</h2><div class="card" id="g-dev"></div>
+    <div id="stepnav"><div class="prog" id="sp"></div><div class="row"><button class="ghost" id="bk">Back</button><button class="main" id="fw">Next step</button></div></div>
+    <div class="row"><button class="ghost" id="reset">Clear all ticks</button></div>
+  </section>
+  <section id="s-quiz"><div id="quiz"></div></section>
+  <section id="s-hack">
+    <h2>Think you're hacked? Act now</h2>
+    <div class="card" id="steps"></div>
+    <h2>Call someone you trust</h2>
+    <div class="notice"><label for="hn" class="who">Helper's phone number</label><input id="hn" type="tel" inputmode="tel" placeholder="Type a number once"></div>
+    <div class="row"><a class="call" id="call" href="#">Call my helper</a></div>
+    <h2>Warn your customers</h2>
+    <div class="notice" id="notice"></div>
+    <div class="row"><button class="main" id="copy">Copy notice</button></div>
+  </section>
+<div class="foot"><button class="main" id="share">Share this app</button><div id="shmsg" aria-live="polite">Made by Roy to keep WhatsApp Business safe.</div></div>
+</main>
+<nav role="tablist">
+  <button role="tab" aria-selected="true" data-t="check"><span>✔</span>Checklist</button>
+  <button role="tab" aria-selected="false" data-t="quiz"><span>🎣</span>Scam quiz</button>
+  <button role="tab" aria-selected="false" data-t="hack"><span>🚨</span>If hacked</button>
+</nav>
+<script>
+const $=id=>document.getElementById(id);
+const groups={
+ "g-acc":[["Turn on two-step verification and set a PIN","Settings > Account > Two-step verification"],["Add a recovery email so you can reset the PIN yourself",""],["Never share your PIN or 6-digit SMS code with anyone","Not even if they say they are WhatsApp"],["Lock the app with fingerprint or face",""],["Remove linked devices you don't recognize","Settings > Linked devices"]],
+ "g-biz":[["Use a dedicated SIM and number for the business",""],["Ask your provider for a SIM-swap lock or PIN",""],["Let staff use multi-device, not a shared phone",""],["Limit who can add you to groups","Settings > Privacy > Groups"],["Turn on Block unknown account messages","Cuts down spam and scam chats"]],
+ "g-dev":[["Update WhatsApp and your phone system",""],["Install apps only from Google Play or the App Store","Never use modded apps like GBWhatsApp"],["Avoid public Wi-Fi for business, or use a VPN",""]]};
+const KEY="chatshield-ticks";let ticks={};
+try{ticks=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(ticks))}catch(e){}}
+let total=0;
+const PL=["Set a secret PIN on WhatsApp","Add your email in case you forget the PIN","Never tell anyone your PIN or code","Lock WhatsApp with your fingerprint or face","Log out other phones you don't know","Use a separate SIM card just for the business","Ask your network to protect your SIM card","Staff should use their own phone, not yours","Choose who can add you to groups","Block messages from strangers","Update WhatsApp and your phone","Only get apps from Play Store or App Store","Don't do business on free public Wi-Fi"];let k=0;
+Object.entries(groups).forEach(([g,list])=>{
+ $(g).innerHTML=list.map(([t,s])=>{const id=g+t;total++;return `<label class="item"><input type="checkbox" data-id="${id}" ${ticks[id]?"checked":""}><span class="box"></span><span><span class="std">${t}</span><span class="plain">${PL[k++]}</span>${s?`<small>${s}</small>`:""}</span></label>`}).join("");
+});
+function score(){
+ const done=Object.values(ticks).filter(Boolean).length,p=Math.round(done/total*100);
+ $("pct").textContent=p+"%";
+ const arc=$("arc");arc.style.strokeDashoffset=263.9*(1-p/100);
+ arc.style.stroke=p==100?"var(--ok)":"var(--brand)";
+ $("status").textContent=p==100?"Fully shielded. Nice work.":p==0?"Tick each step as you finish it":(total-done)+" step"+(total-done==1?"":"s")+" to go";
+}
+document.addEventListener("change",e=>{const id=e.target.dataset&&e.target.dataset.id;if(id){ticks[id]=e.target.checked;save();score()}});
+$("reset").onclick=()=>{ticks={};save();document.querySelectorAll(".item input").forEach(i=>i.checked=false);score()};
+score();
+
+/* Quiz */
+const Q=[
+["WhatsApp Support","Your account will be suspended in 24 hours. Reply with the 6-digit code we just sent you to stay active.",1,"WhatsApp never asks for codes in a chat. Anyone who has your code can take over your number."],
+["Customer, unknown number","Hi, I've paid already. Here is my proof of payment: bit.ly/pay-proof88",1,"Unexpected links with 'proof of payment' are a classic trick. Check your bank app, not the link."],
+["A friend you know","Hey, I'm stuck abroad and my phone is dying. Please send R1,500 airtime, I'll pay you back tonight.",1,"Hijacked accounts message the contacts of the victim. Call your friend on a normal call first."],
+["Inside a chat with Thandi","Your security code with Thandi changed. Tap to learn more.",0,"This is a normal in-app notice, usually when a contact changes phone or reinstalls WhatsApp."],
+["Business promo","Get the green Verified badge for R299. Pay now at wa-verified-biz.com",1,"WhatsApp does not sell badges through random websites. The fake domain gives it away."],
+["Email from WhatsApp","You asked to reset your two-step PIN. Use this link to reset it.",0,"Real, but only if you tapped 'Forgot PIN' yourself. If you did not ask, ignore it and check your account."],
+["Group invite","Earn R5,000 a day just liking videos. Join our WhatsApp group now!",1,"Easy-money jobs are used to collect your details and your codes."],
+["Regular customer","Good morning, can you send your price list and what time you close today?",0,"Normal customer chat. Answer it the way you usually do."]];
+let qi=0,qs=0,ans=false;
+function quiz(){
+ const q=$("quiz");
+ if(qi>=Q.length){q.innerHTML=`<h2>You scored ${qs} out of ${Q.length}</h2><p>${qs>=7?"Sharp eyes. Scammers would struggle with you.":qs>=5?"Good, but read the explanations again.":"Slow down: look at who is asking and what they want."}</p><div class="row"><button class="main" id="again">Play again</button></div>`;
+  $("again").onclick=()=>{qi=0;qs=0;quiz()};return}
+ const [who,txt,fake]=Q[qi];ans=false;
+ q.innerHTML=`<h2>Real or fake?</h2><div class="prog">Message ${qi+1} of ${Q.length}</div><div class="msg"><div class="who">${who}</div><q>${txt}</q><div class="row" id="ch"><button class="real" data-a="0">Real</button><button class="fake" data-a="1">Fake</button></div><div id="fb"></div></div>`;
+ $("ch").onclick=e=>{const a=e.target.dataset.a;if(a===undefined||ans)return;ans=true;const ok=(+a===fake);if(ok)qs++;
+  $("ch").style.display="none";
+  $("fb").innerHTML=`<div class="fb ${ok?"good":"no"}"><b>${ok?"Correct.":"Not quite."}</b> It's ${fake?"fake":"real"}. ${Q[qi][3]}</div><div class="row"><button class="main" id="nx">${qi==Q.length-1?"See score":"Next message"}</button></div>`;
+  $("nx").onclick=()=>{qi++;quiz()}};
+}
+quiz();
+
+/* If hacked */
+const S=[["Re-register your number","Install WhatsApp, enter your number and the SMS code. This logs the attacker out."],["Set a new two-step PIN","Do it straight away so it cannot happen again."],["Check Linked devices","Log out every device you don't recognize."],["Warn your customers","Send the notice below to your contacts and groups."],["Report it","Tell WhatsApp (Settings > Help) and your SIM provider."],["Review recent chats","Look for payments or requests sent in your name."]];
+$("steps").innerHTML=S.map((s,i)=>`<div class="step"><div class="n">${i+1}</div><div><b>${s[0]}</b><small>${s[1]}</small></div></div>`).join("");
+const N="Important: someone briefly got access to my WhatsApp Business account. Please ignore any messages asking for money, codes or links sent from this number during that time. I will never ask for codes or payments through links. If anything looks strange, phone me to confirm.";
+$("notice").textContent=N;
+$("copy").onclick=async()=>{const b=$("copy");try{await navigator.clipboard.writeText(N);b.textContent="Copied"}catch(e){const r=document.createRange();r.selectNodeContents($("notice"));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected: tap Copy"}setTimeout(()=>b.textContent="Copy notice",2500)};
+
+/* Simple mode */
+const R=document.documentElement,Z=[1,1.2,1.4];let simple=false,sz=0,cur=0;
+try{const u=JSON.parse(localStorage.getItem("chatshield-ui")||"{}");simple=!!u.simple;sz=u.sz||0}catch(e){}
+function view(){
+ R.classList.toggle("simple",simple);R.style.setProperty("--z",Z[sz]);
+ $("sm").setAttribute("aria-pressed",simple);
+ document.querySelectorAll("[data-z]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.z===sz));
+ document.querySelectorAll("#s-check .item").forEach((it,i)=>it.classList.toggle("cur",i===cur));
+ document.querySelectorAll("#s-check .card").forEach(c=>c.classList.toggle("has",!!c.querySelector(".cur")));
+ $("sp").textContent="Step "+(cur+1)+" of "+total;
+ $("bk").style.visibility=cur?"visible":"hidden";
+ $("fw").textContent=cur==total-1?"Back to start":"Next step";
+ try{localStorage.setItem("chatshield-ui",JSON.stringify({simple,sz}))}catch(e){}
+}
+$("sm").onclick=()=>{simple=!simple;if(simple&&sz<1)sz=1;view()};
+document.querySelector(".bar").addEventListener("click",e=>{const z=e.target.dataset.z;if(z!==undefined){sz=+z;view()}});
+$("fw").onclick=()=>{cur=(cur+1)%total;view()};
+$("bk").onclick=()=>{if(cur>0){cur--;view()}};
+let hn="";try{hn=localStorage.getItem("chatshield-helper")||""}catch(e){}
+$("hn").value=hn;
+function helper(){const d=$("hn").value.replace(/[^\d+]/g,"");$("call").href=d?"tel:"+d:"#";try{localStorage.setItem("chatshield-helper",$("hn").value)}catch(e){}}
+$("hn").oninput=helper;helper();
+$("call").onclick=e=>{if(!$("hn").value.trim()){e.preventDefault();$("hn").focus()}};
+view();
+
+/* Share */
+$("share").onclick=async()=>{
+ const url="https://claude.ai/artifact/P4UNEamLLeuPmWu1gWmkwo",txt="ChatShield: a free safety kit for WhatsApp Business. Check your account and spot scams.",m=$("shmsg"),old=m.textContent;
+ try{if(navigator.share){await navigator.share({title:"ChatShield",text:txt,url});return}}catch(e){if(e&&e.name==="AbortError")return}
+ try{await navigator.clipboard.writeText(txt+" "+url);m.textContent="Link copied. Paste it in WhatsApp."}catch(e){m.textContent="Copy this link: "+url}
+ setTimeout(()=>m.textContent=old,4000)};
+
+/* Tabs */
+document.querySelector("nav").onclick=e=>{const b=e.target.closest("button");if(!b)return;
+ document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b));
+ document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==="s-"+b.dataset.t));scrollTo(0,0)};
+</script>
+</body>
+</html>
